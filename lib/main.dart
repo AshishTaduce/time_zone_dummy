@@ -19,7 +19,6 @@ class TimeZone extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Colors.red,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -193,7 +192,6 @@ class LocationsSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
     List results = listOfLocations
         .where((cityName) => cityName.toLowerCase().contains(query.toLowerCase()))
         .toList();
