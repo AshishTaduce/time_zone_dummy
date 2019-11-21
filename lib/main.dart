@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
 import 'package:flutter/services.dart';
 import 'package:timezone/standalone.dart';
-import 'Location_Select.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   var byteData =
-  await rootBundle.load('packages/timezone/data/$tzDataDefaultFilename');
+      await rootBundle.load('packages/timezone/data/$tzDataDefaultFilename');
   initializeDatabase(byteData.buffer.asUint8List());
   runApp(TimeZone());
 }
@@ -51,12 +49,12 @@ class _HomePageState extends State<HomePage> {
 
   String getTimeZone(String location) {
     String sign =
-    TZDateTime.now(getLocation(location)).timeZoneOffset.isNegative
-        ? '-'
-        : '+';
+        TZDateTime.now(getLocation(location)).timeZoneOffset.isNegative
+            ? '-'
+            : '+';
 
     int hours =
-    TZDateTime.now(getLocation(location)).timeZoneOffset.inHours.abs();
+        TZDateTime.now(getLocation(location)).timeZoneOffset.inHours.abs();
 
     int minutes =
         TZDateTime.now(getLocation(location)).timeZoneOffset.inMinutes;
@@ -76,12 +74,18 @@ class _HomePageState extends State<HomePage> {
             child: Text('Select time zone'),
           ),
           actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.more_vert, color: Colors.white)),
-            ),
+//            Padding(
+//              padding: const EdgeInsets.only(right: 10),
+//              child: IconButton(
+//                icon: Icon(
+//                  Icons.search,
+//                  color: Colors.white,
+//                ),
+//                onPressed: () {
+//                  showSearch(context: context, delegate: LocationsSearch(listOfLocations));
+//                },
+//              ),
+//            ),
           ],
         ),
         body: Center(
@@ -92,19 +96,19 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   title: Padding(
                     padding: const EdgeInsets.fromLTRB(32, 4, 4, 4),
-                    child: Text('Region', style: TextStyle(color: Colors.white),),
+                    child: Text(
+                      'Region',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                   subtitle: Padding(
                     padding: const EdgeInsets.fromLTRB(32, 4, 4, 4),
                     child: Text(
-                        '${widget.location}  ${getTimeZone(widget.location)}', style: TextStyle(color: Colors.white)),
+                        '${widget.location}  ${getTimeZone(widget.location)}',
+                        style: TextStyle(color: Colors.white)),
                   ),
                   onTap: () {
-                    Navigator.push(
-                        (context),
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                SelectLocation(listOfLocations)));
+                    showSearch(context: context, delegate: LocationsSearch(listOfLocations));
                   },
                 ),
                 ListTile(
@@ -123,11 +127,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(
-                        (context),
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                SelectLocation(listOfLocations)));
                   },
                 ),
               ],
@@ -139,10 +138,20 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+
+
 class LocationsSearch extends SearchDelegate<String> {
   final List<dynamic> cities;
 
   LocationsSearch(this.cities);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    assert(context != null);
+    final ThemeData theme = Theme.of(context);
+    assert(theme != null);
+    return theme;
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -152,7 +161,6 @@ class LocationsSearch extends SearchDelegate<String> {
             query = '';
           },
           icon: Icon(Icons.close)),
-      IconButton(onPressed: () {}, icon: Icon(Icons.clear_all)),
     ];
   }
 
@@ -171,49 +179,46 @@ class LocationsSearch extends SearchDelegate<String> {
     List results = listOfLocations
         .where((cityName) => cityName.toLowerCase().contains(query))
         .toList();
-    return ListView.builder(
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            query = results[index];
-          },
-          dense: true,
-          title: Center(
-            child: Text(
+    return Container(
+      color: Colors.black,
+      child: ListView.builder(
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            onTap: () {
+              query = results[index];
+            },
+            dense: true,
+            title: Text(
               results[index],
-              style: TextStyle(color: Colors.yellow),
+              style: TextStyle(color: Colors.white), textAlign: TextAlign.left,
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     List results = listOfLocations
-        .where((cityName) => cityName.toLowerCase().contains(query.toLowerCase()))
+        .where(
+            (cityName) => cityName.toLowerCase().contains(query.toLowerCase()))
         .toList();
-    return ListView.builder(
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            query = results[index];
-//            Navigator.push(
-//                (context),
-//                MaterialPageRoute(
-//                    builder: (context) => MyHomePage(
-//                          location: listOfLocations[index],
-//                        )));
-          },
-          dense: true,
-          title: Center(
-            child: Text(results[index]),
-          ),
-        );
-      },
+    return Container(
+      color: Colors.black,
+      child: ListView.builder(
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            onTap: () {
+              query = results[index];
+            },
+            dense: true,
+            title: Text(results[index], style: TextStyle(color: Colors.white),textAlign: TextAlign.left,),
+          );
+        },
+      ),
     );
   }
 }
